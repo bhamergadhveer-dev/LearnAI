@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 client = Groq(max_retries=4, timeout=60)
-MODEL = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+MODEL = os.getenv("GROQ_MODEL", "openai/gpt-oss-20b")
 
 SYSTEM = """You are a teacher who builds one complete lesson per topic.
 Return ONLY one valid JSON object, no markdown fences, no commentary:
