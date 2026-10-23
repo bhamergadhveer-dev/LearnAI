@@ -19,12 +19,12 @@ export default function LessonWorkspace({ lesson }) {
 
       <div className="space-y-12">
         {lesson.sections.map((section, i) => (
-          <LessonSection key={`${section.type}-${i}`} section={section} />
+          <LessonSection key={`${section.type}-${i}`} section={section} lesson={lesson} />
         ))}
       </div>
 
       <div className="mt-14">
-        <AskAboutThis />
+        <AskAboutThis lesson={lesson} />
       </div>
     </div>
   );

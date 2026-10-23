@@ -1,11 +1,20 @@
 import ProgressBar from "@/components/learning/ProgressBar";
-import { history } from "@/data/mockData";
+// import { history } from "@/data/mockData";
+import { useEffect, useState } from "react";
+import { api } from "@/lib/api";
 
 /**
  * Compact history panel: recently studied topics with understanding scores.
  * Deliberately not a dashboard — one row per topic.
  */
 export default function HistoryPanel({ onSelect }) {
+  const [items, setItems] = useState([]);
+  useEffect(() => {
+    api("/api/history")
+      .then((d) => setItems(d.items))
+      .catch(() => {});
+  }, []);
+
   return (
     <div className="space-y-1">
       <p className="px-3 pb-1 text-[11px] tracking-wide text-muted-foreground/70 uppercase whitespace-nowrap">

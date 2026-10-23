@@ -1,7 +1,7 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Search, X, Clock } from "lucide-react";
 import Modal from "@/components/ui/Modal";
-import { allSessions, recentSearches } from "@/data/mockData";
+import { api } from "@/lib/api";
 
 /**
  * Search overlay for finding previous learning sessions.
@@ -10,12 +10,23 @@ import { allSessions, recentSearches } from "@/data/mockData";
  */
 export default function SearchModal({ open, onClose, onSelect }) {
   const [query, setQuery] = useState("");
+  const [allSessions, setAllSessions] = useState([]);
+  useEffect(() => {
+    if (!open) return;
+    api("/api/sessions")
+      .then((d) =>
+        setAllSessions(d.groups.flatMap((g) => g.items.map((i) => ({ ...i, group: g.label })))),
+      )
+      .catch(() => {});
+  }, [open]);
+
+  const recentSearches = allSessions.slice(0, 5).map((s) => s.title);
 
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return [];
     return allSessions.filter((s) => s.title.toLowerCase().includes(q));
-  }, [query]);
+  }, [query, allSessions]);
 
   const handleSelect = (id) => {
     setQuery("");

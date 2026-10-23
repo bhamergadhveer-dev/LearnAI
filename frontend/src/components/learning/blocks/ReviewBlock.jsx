@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Check, X, Clock } from "lucide-react";
 import BlockShell from "./BlockShell";
 import Button from "@/components/ui/Button";
-import { practiceQuestions } from "@/data/mockData";
+// import { practiceQuestions } from "@/data/mockData";
 import { cn } from "@/lib/utils";
 
 /**
@@ -10,14 +10,13 @@ import { cn } from "@/lib/utils";
  * `started` reveals the question set; `answers` maps question index -> chosen index.
  */
 export default function ReviewBlock({ section }) {
+  const questions = section.questions ?? [];
   const [started, setStarted] = useState(false);
   const [answers, setAnswers] = useState({});
   const [saved, setSaved] = useState(false);
 
   const answeredCount = Object.keys(answers).length;
-  const score = practiceQuestions.filter(
-    (q, i) => answers[i] === q.correctIndex,
-  ).length;
+  const score = practiceQuestions.filter((q, i) => answers[i] === q.correctIndex).length;
 
   return (
     <BlockShell kind="Practice" heading={section.heading}>

@@ -292,9 +292,7 @@ export default function ProfileModal({ open, onClose }) {
             </p>
             <div className="flex items-center justify-between gap-3">
               <span className="text-xs text-muted-foreground">Theme</span>
-              <div className="w-40">
-                <ThemeToggle showLabel placement="top" align="right" />
-              </div>
+              <ThemeToggle variant="tabs" className="w-64 max-w-full" />
             </div>
           </section>
         </div>

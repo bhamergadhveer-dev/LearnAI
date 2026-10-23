@@ -19,10 +19,39 @@ export default function ThemeToggle({
   align = "left",
   className,
   showLabel = false,
+  variant = "dropdown",
 }) {
   const { theme, setTheme } = useTheme();
   const active = MODES.find((m) => m.value === theme) ?? MODES[2];
   const Icon = active.icon;
+
+  if (variant === "tabs") {
+    return (
+      <div
+        role="group"
+        aria-label="Theme"
+        className={cn("flex items-center gap-1 rounded-sm border border-border bg-secondary/40 p-1", className)}
+      >
+        {MODES.map((mode) => (
+          <button
+            key={mode.value}
+            type="button"
+            aria-pressed={theme === mode.value}
+            onClick={() => setTheme(mode.value)}
+            className={cn(
+              "flex flex-1 items-center justify-center gap-1.5 rounded-sm px-2 py-1.5 text-xs transition-colors",
+              theme === mode.value
+                ? "bg-primary/15 text-primary"
+                : "text-muted-foreground hover:bg-accent hover:text-foreground",
+            )}
+          >
+            <mode.icon className="h-3.5 w-3.5" />
+            {mode.label}
+          </button>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <Dropdown
