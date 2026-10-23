@@ -2,6 +2,8 @@ import json
 import sqlite3
 from datetime import date, datetime, timedelta
 from pathlib import Path
+import os
+DB_PATH = "/tmp/learnai.db" if os.environ.get("VERCEL") else "learnai.db"
 
 DB_PATH = Path(__file__).with_name("learnai.db")
 
