@@ -1,65 +1,176 @@
-Team name: Logic Masters
-Team leader: BHAMER LAL
-Phone No: 03121692877
-Team member 2: Jawad Haider
-Phone No: 0348 2935160
- 
- # LearnAI
+# LearnAI
 
-Type a topic and get one complete lesson: explanation, analogy, story,
-visualization, animation, practice, common mistakes, quiz and a
-teach-it-back check graded by AI. Greetings and small talk get a short
-chat reply instead of a lesson, and the "Ask about this" box answers
-follow-up questions or explains any topic in full.
+**One topic. One complete learning experience.**
 
-## Stack
+LearnAI is an AI-powered learning workspace for school, college, and university students. Instead of searching across notes, videos, and websites, a student enters one topic and receives a structured, personalised lesson with explanations, examples, visualisations, practice, and an AI-powered understanding check.
 
-- **Frontend:** React, Vite, TanStack Router, Tailwind
-- **Backend:** Flask, SQLite
-- **AI:** Groq (`llama-3.3-70b-versatile` by default)
+**Live demo:** [learnai-d4fy.vercel.app](https://learnai-d4fy.vercel.app)
 
-## Setup
+## The problem
 
-### Backend
+Students often learn from scattered resources that do not match their level or learning style. This makes it difficult to build a clear understanding of a topic and assess whether they have actually learned it.
+
+LearnAI turns a single prompt, such as _“Teach me recursion from the basics”_, into one focused learning experience tailored to the student's academic profile and learning goal.
+
+## Features
+
+- AI-generated, structured lessons for any topic
+- Personalised explanations using the student's education level, field of study, subjects, and learning preferences
+- Real-life analogies, stories, visual step-throughs, animations, code examples, and practical applications
+- Interactive quizzes and practice questions
+- Teach-back activity: students explain a concept in their own words and receive AI feedback with an understanding score
+- Contextual “Ask about this” tutor for lesson follow-up questions
+- Saved learning sessions, search, history, and understanding progress
+- Responsive, dark-first learning workspace with light and system themes
+
+## How it works
+
+```text
+Student topic + learning goal + profile
+                |
+                v
+          Flask API + Groq
+                |
+                v
+  Validated lesson sections stored in SQLite
+                |
+                v
+Interactive React learning workspace
+```
+
+The AI returns structured JSON. The backend validates and cleans every lesson section before the frontend renders it with reusable lesson-block components.
+
+## Tech stack
+
+| Area       | Technology                                          |
+| ---------- | --------------------------------------------------- |
+| Frontend   | React 19, TanStack Start/Router, Tailwind CSS, Vite |
+| Backend    | Python, Flask, Flask-CORS                           |
+| AI         | Groq API                                            |
+| Data       | SQLite                                              |
+| Deployment | Vercel multi-service deployment                     |
+
+## Project structure
+
+```text
+.
+├── backend/
+│   ├── app.py          # Flask API routes
+│   ├── ai.py           # Groq lesson generation, Q&A, and teach-back grading
+│   ├── db.py           # SQLite session and history storage
+│   └── requirements.txt
+├── frontend/
+│   └── src/
+│       ├── components/ # Reusable UI, layout, chat, and learning blocks
+│       ├── pages/      # Landing, authentication, home, and lesson pages
+│       ├── context/    # Theme and learner-profile state
+│       └── routes/     # TanStack file-based routes
+└── vercel.json         # Routes /api/* to Flask and all other paths to React
+```
+
+## Run locally
+
+### Prerequisites
+
+- Node.js 20+
+- Python 3.10+
+- A [Groq API key](https://console.groq.com)
+
+### 1. Start the backend
 
 ```bash
 cd backend
 python -m venv venv
-venv\Scripts\activate        # macOS/Linux: source venv/bin/activate
-pip install -r requirements.txt
-cp .env.example .env         # Windows: copy .env.example .env
 ```
 
-Put your key from https://console.groq.com in `backend/.env`, then:
+Activate the virtual environment:
+
+```powershell
+# Windows PowerShell
+.\venv\Scripts\Activate.ps1
+```
 
 ```bash
-python app.py                # runs on http://127.0.0.1:5000
+# macOS / Linux
+source venv/bin/activate
 ```
 
-### Frontend
+Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+Create `backend/.env` from `backend/.env.example`, then add your key:
+
+```env
+GROQ_API_KEY=your_groq_api_key
+GROQ_MODEL=llama-3.3-70b-versatile
+```
+
+Run the API:
+
+```bash
+python app.py
+```
+
+The backend runs at `http://127.0.0.1:5000`.
+
+### 2. Start the frontend
+
+In a second terminal:
 
 ```bash
 cd frontend
 npm install
-npm run dev                  # opens on http://localhost:8080
+npm run dev
 ```
 
-Start the backend first. The frontend calls it on port 5000.
+Open the local URL displayed by Vite. The Vite development server proxies `/api` requests to Flask on port `5000`.
 
 ## API
 
-| Method | Route                     | Purpose                                               |
-| ------ | ------------------------- | ----------------------------------------------------- |
-| POST   | `/api/lessons/generate`   | Build a lesson, or return `{greeting}` for small talk |
-| GET    | `/api/sessions`           | Lessons grouped for the sidebar                       |
-| GET    | `/api/sessions/<id>`      | One saved lesson                                      |
-| GET    | `/api/history`            | Learning history with understanding scores            |
-| POST   | `/api/teachback/evaluate` | Grade a teach-back answer                             |
-| POST   | `/api/ask`                | Ask about a lesson, or any topic                      |
+| Method | Endpoint                  | Description                                       |
+| ------ | ------------------------- | ------------------------------------------------- |
+| `GET`  | `/api/health`             | Confirms the API is available                     |
+| `POST` | `/api/lessons/generate`   | Generates and saves a lesson                      |
+| `GET`  | `/api/sessions`           | Returns saved lessons grouped by date             |
+| `GET`  | `/api/sessions/:id`       | Returns one saved lesson                          |
+| `GET`  | `/api/history`            | Returns learning history and understanding scores |
+| `POST` | `/api/teachback/evaluate` | Grades a student's teach-back response            |
+| `POST` | `/api/ask`                | Answers contextual lesson questions               |
 
-## Notes
+## Deploy to Vercel
 
-- The student's name and email are never sent to the AI. Only
-  learning-related profile fields are.
-- Never commit `.env`. Use `.env.example` as the template.
+This repository uses `vercel.json` to deploy the frontend and Flask backend together:
+
+- `/api/*` is routed to the Flask service.
+- All other routes are served by the TanStack Start frontend.
+
+Add these environment variables in **Vercel → Project Settings → Environment Variables** before deployment:
+
+```text
+GROQ_API_KEY=your_groq_api_key
+GROQ_MODEL=llama-3.3-70b-versatile
+```
+
+Add them to Production, Preview, and Development as needed. Never commit the API key or a populated `.env` file.
+
+> **Note:** Vercel serverless storage is temporary. SQLite is suitable for this hackathon demonstration, but a hosted database such as Supabase, Neon, or PostgreSQL should be used for persistent production learning history.
+
+## Privacy
+
+LearnAI sends only learning-relevant profile information to the AI service, such as education level, subjects, preferred explanation style, and language. A student's name and email are not included in the AI lesson-generation payload.
+
+## Team
+
+**Logic Masters**
+
+- Bhamer Lal — Team Leader
+- Jawad Haider — Team Member
+
+## License
+
+Built for the TECHGEN Society Hackathon 2026–27.
+
 # LearnAI
